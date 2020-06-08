@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:birdTD/actors/actor.dart';
+import 'package:birdTD/actors/tower.dart';
 import 'package:birdTD/tile-map.dart';
 import 'package:birdTD/view.dart';
 import 'package:birdTD/views/home-view.dart';
@@ -21,6 +23,8 @@ class BirdTDGame extends Game with TapDetector {
   StartButton startButton;
   LostView lostView;
 
+  List<Actor> actors = [];
+
   BirdTDGame() {
     init();
   }
@@ -31,6 +35,8 @@ class BirdTDGame extends Game with TapDetector {
     homeView = HomeView(this);
     startButton = StartButton(this);
     lostView = LostView(this);
+
+    actors.add(Tower());
   }
 
   TileMap tiles = TileMap(
@@ -61,7 +67,9 @@ class BirdTDGame extends Game with TapDetector {
         break;
       }
       case View.playing:{
-        // TODO: Handle this case.
+        for (Actor actor in actors) {
+          actor.render(canvas);
+        }
         break;
       }
       case View.lost:{
@@ -90,19 +98,15 @@ class BirdTDGame extends Game with TapDetector {
     }
 
     if (!isHandled) {
-      //TODO handle here the game action
-      bool didHitAFly = false;
-
-//      flies.forEach((Fly fly) {
-//        if (fly.flyRect.contains(details.globalPosition)) {
-//          fly.onTapDown();
-//          isHandled = true;
-//          didHitAFly = true;
-//        }
-//      });
+      actors.forEach((Actor actor) {
+        if (actor.contains(details.globalPosition)) {
+          actor.onTapDown();
+          isHandled = true;
+        }
+      });
 
       //TODO this activate the losers screen
-      if (activeView == View.playing && !didHitAFly) {
+      if (activeView == View.playing && !isHandled) {
         activeView = View.lost;
       }
     }
