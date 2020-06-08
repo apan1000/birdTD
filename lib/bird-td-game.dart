@@ -10,6 +10,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'components/start-button.dart';
+import 'views/lost_view.dart';
 
 class BirdTDGame extends Game with TapDetector {
   Size screenSize;
@@ -18,6 +19,7 @@ class BirdTDGame extends Game with TapDetector {
   View activeView = View.home;
   HomeView homeView;
   StartButton startButton;
+  LostView lostView;
 
   BirdTDGame() {
     init();
@@ -28,6 +30,7 @@ class BirdTDGame extends Game with TapDetector {
 
     homeView = HomeView(this);
     startButton = StartButton(this);
+    lostView = LostView(this);
   }
 
   TileMap tiles = TileMap(
@@ -50,10 +53,22 @@ class BirdTDGame extends Game with TapDetector {
         canvas.drawRect(rect, paint);
       }
     }
-    if (activeView == View.home) homeView.render(canvas);
 
-    if (activeView == View.home || activeView == View.lost) {
-      startButton.render(canvas);
+    switch (activeView) {
+      case View.home: {
+        homeView.render(canvas);
+        startButton.render(canvas);
+        break;
+      }
+      case View.playing:{
+        // TODO: Handle this case.
+        break;
+      }
+      case View.lost:{
+        lostView.render(canvas);
+        startButton.render(canvas);
+        break;
+      }
     }
   }
 
@@ -76,12 +91,20 @@ class BirdTDGame extends Game with TapDetector {
 
     if (!isHandled) {
       //TODO handle here the game action
+      bool didHitAFly = false;
+
 //      flies.forEach((Fly fly) {
 //        if (fly.flyRect.contains(details.globalPosition)) {
 //          fly.onTapDown();
 //          isHandled = true;
+//          didHitAFly = true;
 //        }
 //      });
+
+      //TODO this activate the losers screen
+      if (activeView == View.playing && !didHitAFly) {
+        activeView = View.lost;
+      }
     }
 
     print(
