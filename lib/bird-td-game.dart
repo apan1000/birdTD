@@ -65,6 +65,25 @@ class BirdTDGame extends Game with TapDetector {
   }
 
   void onTapDown(TapDownDetails details) {
+    bool isHandled = false;
+
+    if (!isHandled && startButton.rect.contains(details.globalPosition) &&
+        (activeView == View.home || activeView == View.lost)
+    ) {
+      startButton.onTapDown();
+      isHandled = true;
+    }
+
+    if (!isHandled) {
+      //TODO handle here the game action
+//      flies.forEach((Fly fly) {
+//        if (fly.flyRect.contains(details.globalPosition)) {
+//          fly.onTapDown();
+//          isHandled = true;
+//        }
+//      });
+    }
+
     print(
         "Tap down: ${details.globalPosition.dx}, ${details.globalPosition.dy}");
   }

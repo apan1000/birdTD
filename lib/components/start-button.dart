@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:birdTD/bird-td-game.dart';
+import 'package:birdTD/view.dart';
 import 'package:flame/sprite.dart';
 
 class StartButton {
@@ -23,5 +24,7 @@ class StartButton {
 
   void update(double t) {}
 
-  void onTapDown() {}
+  void onTapDown() {
+    game.activeView = View.playing;
+  }
 }
