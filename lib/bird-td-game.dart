@@ -1,12 +1,30 @@
 import 'dart:ui';
 
 import 'package:birdTD/tile-map.dart';
+import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flame/gestures.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:birdTD/view.dart';
+import 'package:birdTD/views/home-view.dart';
 
 class BirdTDGame extends Game with TapDetector {
   Size screenSize;
+  double tileSize = 50;
+
+  View activeView = View.home;
+  HomeView homeView;
+
+  BirdTDGame() {
+    init();
+  }
+
+  void init() async {
+    resize(await Flame.util.initialDimensions());
+    homeView = HomeView(this);
+  }
+
   TileMap tiles = TileMap(
       [1, 0, 1, 1, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 1]
           .map((e) => TileType.values[e])
@@ -27,6 +45,7 @@ class BirdTDGame extends Game with TapDetector {
         canvas.drawRect(rect, paint);
       }
     }
+    if (activeView == View.home) homeView.render(canvas);
   }
 
   void update(double t) {}
