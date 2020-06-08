@@ -2,8 +2,9 @@ import 'dart:ui';
 import 'package:flame/gestures.dart';
 
 import 'package:flame/game.dart';
+import 'package:flutter/cupertino.dart';
 
-class BirdTDGame extends Game {
+class BirdTDGame extends Game with TapDetector {
 
   Size screenSize;
 
@@ -21,5 +22,17 @@ class BirdTDGame extends Game {
   void resize(Size size) {
     screenSize = size;
     super.resize(size);
+  }
+
+  void onTapDown(TapDownDetails details) {
+    print("Tap down: ${details.globalPosition.dx}, ${details.globalPosition.dy}");
+  }
+
+  void onTapUp(TapUpDetails details) {
+    print("Tap up: ${details.globalPosition.dx}, ${details.globalPosition.dy}");
+  }
+
+  void onTapCancel() {
+    print("Tap cancel");
   }
 }
