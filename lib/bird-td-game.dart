@@ -9,12 +9,15 @@ import 'package:flutter/material.dart';
 import 'package:birdTD/view.dart';
 import 'package:birdTD/views/home-view.dart';
 
+import 'components/start-button.dart';
+
 class BirdTDGame extends Game with TapDetector {
   Size screenSize;
   double tileSize = 50;
 
   View activeView = View.home;
   HomeView homeView;
+  StartButton startButton;
 
   BirdTDGame() {
     init();
@@ -22,7 +25,9 @@ class BirdTDGame extends Game with TapDetector {
 
   void init() async {
     resize(await Flame.util.initialDimensions());
+
     homeView = HomeView(this);
+    startButton = StartButton(this);
   }
 
   TileMap tiles = TileMap(
@@ -46,6 +51,10 @@ class BirdTDGame extends Game with TapDetector {
       }
     }
     if (activeView == View.home) homeView.render(canvas);
+
+    if (activeView == View.home || activeView == View.lost) {
+      startButton.render(canvas);
+    }
   }
 
   void update(double t) {}

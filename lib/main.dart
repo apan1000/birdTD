@@ -22,8 +22,5 @@ void main() async {
   ]);
 
   BirdTDGame game = BirdTDGame();
-  TapGestureRecognizer tapper = TapGestureRecognizer();
-  tapper.onTapDown = game.onTapDown;
   runApp(game.widget);
-  flameUtil.addGestureRecognizer(tapper);
 }
