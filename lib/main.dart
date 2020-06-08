@@ -1,9 +1,7 @@
-import 'package:flame/flame.dart';
-import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
-import 'package:flame/util.dart';
 import 'package:birdTD/bird-td-game.dart';
-import 'package:flutter/services.dart';
+import 'package:flame/flame.dart';
+import 'package:flame/util.dart';
+import 'package:flutter/material.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -11,9 +9,9 @@ void main() async {
   Util flameUtil = Util();
   await flameUtil.fullScreen();
   await flameUtil.setPortraitUpOnly();
-  await flameUtil.setOrientation(DeviceOrientation.portraitUp);
 
-  Flame.images.loadAll(<String>[
+  Flame.images.loadAll([
+    'dash-front.png',
     'lose-splash.png',
     'title.png',
     'dialog-credits.png',
@@ -22,8 +20,5 @@ void main() async {
   ]);
 
   BirdTDGame game = BirdTDGame();
-  TapGestureRecognizer tapper = TapGestureRecognizer();
-  tapper.onTapDown = game.onTapDown;
   runApp(game.widget);
-  flameUtil.addGestureRecognizer(tapper);
 }

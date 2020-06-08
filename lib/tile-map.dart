@@ -22,6 +22,8 @@ extension TileMapExtensions on TileMap {
   }
 
   TileType get(int x, int y) {
+    assert(x < width);
+    assert(y < height);
     return tiles[x + y * width];
   }
 }

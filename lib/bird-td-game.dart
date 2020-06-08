@@ -1,13 +1,13 @@
 import 'dart:ui';
 
 import 'package:birdTD/tile-map.dart';
+import 'package:birdTD/view.dart';
+import 'package:birdTD/views/home-view.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flame/gestures.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:birdTD/view.dart';
-import 'package:birdTD/views/home-view.dart';
 
 class BirdTDGame extends Game with TapDetector {
   Size screenSize;
