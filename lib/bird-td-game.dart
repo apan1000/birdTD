@@ -84,13 +84,9 @@ class BirdTDGame extends Game with TapDetector {
         }
       case View.playing:
         {
-          for (Tile tile in tiles) {
-            tile.render(canvas);
-          }
-          for (Actor actor in actors) {
-            actor.render(canvas);
-          }
-          enemies.forEach((Enemy enemy) => enemy.render(canvas));
+          tiles.forEach((tile) => tile.render(canvas));
+          actors.forEach((actor) => actor.render(canvas));
+          enemies.forEach((enemy) => enemy.render(canvas));
           break;
         }
       case View.lost:
