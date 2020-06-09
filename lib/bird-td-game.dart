@@ -1,7 +1,6 @@
 import 'dart:ui';
 
 import 'package:birdTD/actors/actor.dart';
-import 'package:birdTD/actors/tower.dart';
 import 'package:birdTD/tile-map.dart';
 import 'package:birdTD/view.dart';
 import 'package:birdTD/views/home-view.dart';
@@ -11,6 +10,8 @@ import 'package:flame/gestures.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'actors/tile.dart';
+import 'actors/tower.dart';
 import 'components/start-button.dart';
 import 'views/lost_view.dart';
 
@@ -24,6 +25,7 @@ class BirdTDGame extends Game with TapDetector {
   LostView lostView;
 
   List<Actor> actors = [];
+  List<Tile> tiles = [];
 
   BirdTDGame() {
     init();
@@ -36,47 +38,57 @@ class BirdTDGame extends Game with TapDetector {
     startButton = StartButton(this);
     lostView = LostView(this);
 
-    actors.add(Tower());
-  }
+    TileMap tileMap = TileMap([
+      1, 1, 0, 1, 1, 1,
+      1, 1, 0, 1, 1, 1,
+      1, 1, 0, 1, 1, 1,
+      1, 1, 0, 1, 1, 1,
+      1, 1, 0, 0, 0, 0,
+      1, 1, 0, 1, 1, 1,
+      1, 1, 0, 1, 1, 1,
+      1, 1, 0, 1, 1, 1,
+      1, 1, 0, 1, 1, 1
+    ].map((e) => TileType.values[e]).toList(), 6);
 
-  TileMap tiles = TileMap(
-      [1, 0, 1, 1, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 1]
-          .map((e) => TileType.values[e])
-          .toList(),
-      3);
-
-  Paint paint = Paint();
-
-  void render(Canvas canvas) {
     var screenWidth = screenSize.width;
     var screenHeight = screenSize.height;
-    for (int x = 0; x < tiles.width; x++) {
-      for (int y = 0; y < tiles.height; y++) {
-        var width = screenWidth / tiles.width;
-        var height = screenHeight / tiles.height;
+    for (int x = 0; x < tileMap.width; x++) {
+      for (int y = 0; y < tileMap.height; y++) {
+        var width = screenWidth / tileMap.width;
+        var height = screenHeight / tileMap.height;
         Rect rect = Rect.fromLTWH(x * width, y * height, width, height);
-        paint.color = getTileColor(tiles.get(x, y));
-        canvas.drawRect(rect, paint);
+        Tile tile = Tile(rect, tileMap.get(x, y), (Rect rect) {
+          actors.add(Tower(rect));
+        });
+        tiles.add(tile);
       }
     }
+  }
 
+  void render(Canvas canvas) {
     switch (activeView) {
-      case View.home: {
-        homeView.render(canvas);
-        startButton.render(canvas);
-        break;
-      }
-      case View.playing:{
-        for (Actor actor in actors) {
-          actor.render(canvas);
+      case View.home:
+        {
+          homeView.render(canvas);
+          startButton.render(canvas);
+          break;
         }
-        break;
-      }
-      case View.lost:{
-        lostView.render(canvas);
-        startButton.render(canvas);
-        break;
-      }
+      case View.playing:
+        {
+          for (Tile tile in tiles) {
+            tile.render(canvas);
+          }
+          for (Actor actor in actors) {
+            actor.render(canvas);
+          }
+          break;
+        }
+      case View.lost:
+        {
+          lostView.render(canvas);
+          startButton.render(canvas);
+          break;
+        }
     }
   }
 
@@ -90,46 +102,68 @@ class BirdTDGame extends Game with TapDetector {
   void onTapDown(TapDownDetails details) {
     bool isHandled = false;
 
-    if (!isHandled && startButton.rect.contains(details.globalPosition) &&
-        (activeView == View.home || activeView == View.lost)
-    ) {
-      startButton.onTapDown();
+    if (activeView == View.home || activeView == View.lost) {
       isHandled = true;
     }
 
     if (!isHandled) {
-      actors.forEach((Actor actor) {
+      for (Actor actor in actors) {
         if (actor.contains(details.globalPosition)) {
           actor.onTapDown();
           isHandled = true;
+          break;
         }
-      });
+      }
+
+      if (!isHandled) {
+        for (Tile tile in tiles) {
+          if (tile.contains(details.globalPosition)) {
+            tile.onTapDown();
+            isHandled = true;
+            break;
+          }
+        }
+      }
 
       //TODO this activate the losers screen
       if (activeView == View.playing && !isHandled) {
         activeView = View.lost;
       }
     }
-
-    print(
-        "Tap down: ${details.globalPosition.dx}, ${details.globalPosition.dy}");
   }
 
   void onTapUp(TapUpDetails details) {
-    print("Tap up: ${details.globalPosition.dx}, ${details.globalPosition.dy}");
+    bool isHandled = false;
+
+    if (activeView == View.home || activeView == View.lost) {
+      if (startButton.rect.contains(details.globalPosition)) {
+        startButton.onTapUp();
+      }
+      isHandled = true;
+    }
+
+    if (!isHandled) {
+      for (Actor actor in actors) {
+        if (actor.contains(details.globalPosition)) {
+          actor.onTapUp();
+          isHandled = true;
+          break;
+        }
+      }
+    }
+
+    if (!isHandled) {
+      for (Tile tile in tiles) {
+        if (tile.contains(details.globalPosition)) {
+          tile.onTapUp();
+          isHandled = true;
+          break;
+        }
+      }
+    }
   }
 
   void onTapCancel() {
     print("Tap cancel");
-  }
-
-  Color getTileColor(TileType tileType) {
-    switch (tileType) {
-      case TileType.dirt:
-        return Color(0xff886633);
-      case TileType.grass:
-        return Color(0xff558833);
-    }
-    return Color(0xff000000);
   }
 }

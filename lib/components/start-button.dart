@@ -24,7 +24,7 @@ class StartButton {
 
   void update(double t) {}
 
-  void onTapDown() {
+  void onTapUp() {
     game.activeView = View.playing;
   }
 }

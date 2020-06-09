@@ -12,6 +12,8 @@ void main() async {
 
   Flame.images.loadAll([
     'dash-front.png',
+    'grass.png',
+    'dirt.png',
     'lose-splash.png',
     'title.png',
     'dialog-credits.png',
