@@ -11,7 +11,7 @@ void main() async {
   await flameUtil.setPortraitUpOnly();
 
   Flame.images.loadAll([
-    'dash-front.png',
+    'bird1.png',
     'grass.png',
     'dirt.png',
     'lose-splash.png',

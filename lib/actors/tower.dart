@@ -4,7 +4,7 @@ import 'package:birdTD/actors/actor.dart';
 import 'package:flame/sprite.dart';
 
 class Tower implements Actor {
-  Sprite _sprite = Sprite('dash-front.png');
+  Sprite _sprite = Sprite('bird1.png');
   Rect _rect;
 
   Tower(this._rect);

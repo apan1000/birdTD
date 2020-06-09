@@ -47,31 +47,17 @@ class BirdTDGame extends Game with TapDetector {
 
     spawnEnemies();
 
-  TileMap tileMap = TileMap([
-    1, 1, 0, 1, 1, 1,
-    1, 1, 0, 1, 1, 1,
-    1, 1, 0, 1, 1, 1,
-    1, 1, 0, 1, 1, 1,
-    1, 1, 0, 0, 0, 0,
-    1, 1, 0, 1, 1, 1,
-    1, 1, 0, 1, 1, 1,
-    1, 1, 0, 1, 1, 1,
-    1, 1, 0, 1, 1, 1
-  ]
-  .map((e) => TileType.values[e])
-  .toList(),
-  6);
-
-//  TileMap tileMap = TileMap([
-//    1, 0, 1,
-//    1, 0, 1,
-//    1, 0, 0,
-//    1, 0, 1,
-//    1, 0, 1
-//  ]
-//  .map((e) => TileType.values[e])
-//  .toList(),
-//  3);
+    TileMap tileMap = TileMap([
+      1, 1, 0, 1, 1, 1,
+      1, 1, 0, 1, 1, 1,
+      1, 1, 0, 1, 1, 1,
+      1, 1, 0, 1, 1, 1,
+      1, 1, 0, 0, 0, 0,
+      1, 1, 0, 1, 1, 1,
+      1, 1, 0, 1, 1, 1,
+      1, 1, 0, 1, 1, 1,
+      1, 1, 0, 1, 1, 1
+    ].map((e) => TileType.values[e]).toList(), 6);
 
     var screenWidth = screenSize.width;
     var screenHeight = screenSize.height;
@@ -117,8 +103,12 @@ class BirdTDGame extends Game with TapDetector {
   }
 
   void update(double t) {
-    enemies.forEach((Enemy enemy) => enemy.update(t));
-    enemies.removeWhere((Enemy enemy) => enemy.isOffScreen);
+    enemies.forEach((enemy) => enemy.update(t));
+    enemies.removeWhere((enemy) => enemy.isOffScreen);
+
+    actors.forEach((actor) => actor.update(t));
+
+    tiles.forEach((tile) => tile.update(t));
   }
 
   void resize(Size size) {
