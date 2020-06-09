@@ -1,6 +1,9 @@
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:birdTD/actors/actor.dart';
+import 'package:birdTD/actors/enemy.dart';
+import 'package:birdTD/actors/tower.dart';
 import 'package:birdTD/tile-map.dart';
 import 'package:birdTD/view.dart';
 import 'package:birdTD/views/home-view.dart';
@@ -18,12 +21,14 @@ import 'views/lost_view.dart';
 class BirdTDGame extends Game with TapDetector {
   Size screenSize;
   double tileSize = 50;
+  Random random;
 
   View activeView = View.home;
   HomeView homeView;
   StartButton startButton;
   LostView lostView;
 
+  List<Enemy> enemies;
   List<Actor> actors = [];
   List<Tile> tiles = [];
 
@@ -32,23 +37,41 @@ class BirdTDGame extends Game with TapDetector {
   }
 
   void init() async {
+    random = Random();
+    enemies = List<Enemy>();
     resize(await Flame.util.initialDimensions());
 
     homeView = HomeView(this);
     startButton = StartButton(this);
     lostView = LostView(this);
 
-    TileMap tileMap = TileMap([
-      1, 1, 0, 1, 1, 1,
-      1, 1, 0, 1, 1, 1,
-      1, 1, 0, 1, 1, 1,
-      1, 1, 0, 1, 1, 1,
-      1, 1, 0, 0, 0, 0,
-      1, 1, 0, 1, 1, 1,
-      1, 1, 0, 1, 1, 1,
-      1, 1, 0, 1, 1, 1,
-      1, 1, 0, 1, 1, 1
-    ].map((e) => TileType.values[e]).toList(), 6);
+    spawnEnemies();
+
+  TileMap tileMap = TileMap([
+    1, 1, 0, 1, 1, 1,
+    1, 1, 0, 1, 1, 1,
+    1, 1, 0, 1, 1, 1,
+    1, 1, 0, 1, 1, 1,
+    1, 1, 0, 0, 0, 0,
+    1, 1, 0, 1, 1, 1,
+    1, 1, 0, 1, 1, 1,
+    1, 1, 0, 1, 1, 1,
+    1, 1, 0, 1, 1, 1
+  ]
+  .map((e) => TileType.values[e])
+  .toList(),
+  6);
+
+//  TileMap tileMap = TileMap([
+//    1, 0, 1,
+//    1, 0, 1,
+//    1, 0, 0,
+//    1, 0, 1,
+//    1, 0, 1
+//  ]
+//  .map((e) => TileType.values[e])
+//  .toList(),
+//  3);
 
     var screenWidth = screenSize.width;
     var screenHeight = screenSize.height;
@@ -81,6 +104,7 @@ class BirdTDGame extends Game with TapDetector {
           for (Actor actor in actors) {
             actor.render(canvas);
           }
+          enemies.forEach((Enemy enemy) => enemy.render(canvas));
           break;
         }
       case View.lost:
@@ -92,11 +116,20 @@ class BirdTDGame extends Game with TapDetector {
     }
   }
 
-  void update(double t) {}
+  void update(double t) {
+    enemies.forEach((Enemy enemy) => enemy.update(t));
+    enemies.removeWhere((Enemy enemy) => enemy.isOffScreen);
+  }
 
   void resize(Size size) {
     screenSize = size;
     super.resize(size);
+  }
+
+  void spawnEnemies() {
+    double x = random.nextDouble() * (screenSize.width - tiles.length);
+    double y = -50;
+    enemies.add(Enemy(this, x, y));
   }
 
   void onTapDown(TapDownDetails details) {
@@ -107,6 +140,8 @@ class BirdTDGame extends Game with TapDetector {
     }
 
     if (!isHandled) {
+      spawnEnemies();
+
       for (Actor actor in actors) {
         if (actor.contains(details.globalPosition)) {
           actor.onTapDown();
@@ -125,7 +160,6 @@ class BirdTDGame extends Game with TapDetector {
         }
       }
 
-      //TODO this activate the losers screen
       if (activeView == View.playing && !isHandled) {
         activeView = View.lost;
       }
