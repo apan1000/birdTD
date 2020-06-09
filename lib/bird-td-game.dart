@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:birdTD/actors/actor.dart';
 import 'package:birdTD/actors/enemy.dart';
+import 'package:birdTD/actors/spider.dart';
 import 'package:birdTD/actors/tower.dart';
 import 'package:birdTD/tile-map.dart';
 import 'package:birdTD/view.dart';
@@ -16,6 +17,7 @@ import 'package:flutter/material.dart';
 import 'actors/tile.dart';
 import 'actors/tower.dart';
 import 'components/start-button.dart';
+import 'tile-map.dart';
 import 'views/lost_view.dart';
 
 class BirdTDGame extends Game with TapDetector {
@@ -27,6 +29,7 @@ class BirdTDGame extends Game with TapDetector {
   HomeView homeView;
   StartButton startButton;
   LostView lostView;
+  TileMap tileMap;
 
   List<Enemy> enemies;
   List<Actor> actors = [];
@@ -61,11 +64,11 @@ class BirdTDGame extends Game with TapDetector {
 
     var screenWidth = screenSize.width;
     var screenHeight = screenSize.height;
-    for (int x = 0; x < tileMap.width; x++) {
-      for (int y = 0; y < tileMap.height; y++) {
-        var width = screenWidth / tileMap.width;
-        var height = screenHeight / tileMap.height;
-        Rect rect = Rect.fromLTWH(x * width, y * height, width, height);
+    for (int x = 1; x < tileMap.width-1; x++) {
+      for (int y = 1; y < tileMap.height-1; y++) {
+        var width = screenWidth / (tileMap.width-2);
+        var height = screenHeight / (tileMap.height-2);
+        Rect rect = Rect.fromLTWH((x-1) * width, (y-1) * height, width, height);
         Tile tile = Tile(rect, tileMap.get(x, y), (Rect rect) {
           actors.add(Tower(rect));
         });
@@ -78,6 +81,9 @@ class BirdTDGame extends Game with TapDetector {
     switch (activeView) {
       case View.home:
         {
+          for (Tile tile in tiles) {
+            tile.render(canvas);
+          }
           homeView.render(canvas);
           startButton.render(canvas);
           break;
@@ -95,6 +101,11 @@ class BirdTDGame extends Game with TapDetector {
         }
       case View.lost:
         {
+          for (Tile tile in tiles) {
+            tile.render(canvas);
+          }
+          actors.clear();
+          enemies.clear();
           lostView.render(canvas);
           startButton.render(canvas);
           break;
@@ -117,9 +128,9 @@ class BirdTDGame extends Game with TapDetector {
   }
 
   void spawnEnemies() {
-    double x = random.nextDouble() * (screenSize.width - tiles.length);
+    double x = screenSize.width / (3);
     double y = -50;
-    enemies.add(Enemy(this, x, y));
+    enemies.add(Spider(this, x, y));
   }
 
   void onTapDown(TapDownDetails details) {

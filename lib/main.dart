@@ -19,6 +19,10 @@ void main() async {
     'dialog-credits.png',
     'dialog-help.png',
     'start-button.png',
+    'spider-dead.png',
+    'spider-walk1.png',
+    'spider-walk2.png',
+    'spider-hit.png'
   ]);
 
   BirdTDGame game = BirdTDGame();
