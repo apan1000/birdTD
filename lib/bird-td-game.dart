@@ -37,8 +37,8 @@ class BirdTDGame extends Game with TapDetector {
   List<Actor> actors = [];
   List<Tile> tiles = [];
 
-  List<double> xStartPositions = [];
-  List<double> yStartPositions = [];
+  double xStartPosition = 0;
+  double yStartPosition = 0;
 
   double createEnemiesTimer = 0.0;
 
@@ -54,7 +54,7 @@ class BirdTDGame extends Game with TapDetector {
     tileMap = TileMap([
       1, 1, 0, 1, 1, 1,
       1, 1, 0, 1, 1, 1,
-      1, 1, 0, 0, 0, 0,
+      1, 1, 0, 1, 1, 1,
       1, 1, 0, 1, 1, 1,
       1, 1, 0, 1, 1, 1,
       1, 1, 0, 0, 0, 0,
@@ -84,14 +84,10 @@ class BirdTDGame extends Game with TapDetector {
         });
         tiles.add(tile);
         if (y == 0 && tileMap.get(x, y) == TileType.dirt) {
-          if (!xStartPositions.contains(x * width + (width / 3))) {
-            xStartPositions.add(x * width + (width / 3));
-          }
+          xStartPosition = x * width + (width / 3);
         }
         if (x == tileMap.width-1 && tileMap.get(x, y) == TileType.dirt) {
-          if (!yStartPositions.contains(y * height + (height / 3))) {
-            yStartPositions.add(y * height + (height / 3));
-          }
+          yStartPosition = y * height + (height / 3);
         }
       }
     }
@@ -152,21 +148,9 @@ class BirdTDGame extends Game with TapDetector {
 
   void spawnEnemies() {
     if (random.nextDouble() > 0.5) {
-      enemies.add(
-          Spider(
-              this,
-              xStartPositions[random.nextInt(xStartPositions.length)],
-              0 - height
-          )
-      );
+      enemies.add(Spider(this, xStartPosition, 0 - height));
     } else {
-      enemies.add(
-          Spider(
-              this,
-              screenSize.width + width,
-              yStartPositions[random.nextInt(yStartPositions.length)]
-          )
-      );
+      enemies.add(Spider(this, screenSize.width + width, yStartPosition));
     }
   }
 

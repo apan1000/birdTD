@@ -61,10 +61,10 @@ class Enemy implements Actor {
       speed = rnd.nextDouble();
       enemySpriteIndex = speed > 0.5 ? 1 : 0;
 
-      if (enemyRect.top < game.xStartPositions[rnd.nextInt(game.xStartPositions.length)]) {
+      if (enemyRect.top < game.xStartPosition) {
         enemyRect = enemyRect.translate(0, game.tileSize * speed * t);
-      } else if (enemyRect.top == game.yStartPositions[rnd.nextInt(game.yStartPositions.length)] &&
-          enemyRect.topLeft.dx > game.xStartPositions[rnd.nextInt(game.xStartPositions.length)]) {
+      } else if (enemyRect.top == game.yStartPosition &&
+          enemyRect.topLeft.dx > game.xStartPosition) {
         enemyRect = enemyRect.translate(-(game.tileSize * speed * t), 0);
       } else {
         enemyRect = enemyRect.translate(0, game.tileSize * speed * t);
