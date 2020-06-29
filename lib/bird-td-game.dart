@@ -35,6 +35,8 @@ class BirdTDGame extends Game with TapDetector {
   List<Actor> actors = [];
   List<Tile> tiles = [];
 
+  double createEnemiesTimer = 0.0;
+
   BirdTDGame() {
     init();
   }
@@ -47,8 +49,6 @@ class BirdTDGame extends Game with TapDetector {
     homeView = HomeView(this);
     startButton = StartButton(this);
     lostView = LostView(this);
-
-    spawnEnemies();
 
     TileMap tileMap = TileMap([
       1, 1, 0, 1, 1, 1,
@@ -110,6 +110,13 @@ class BirdTDGame extends Game with TapDetector {
   }
 
   void update(double t) {
+    createEnemiesTimer += t;
+
+    if (createEnemiesTimer >= 2) {
+      createEnemiesTimer = 0.0;
+      spawnEnemies();
+    }
+
     enemies.forEach((enemy) => enemy.update(t));
     enemies.removeWhere((enemy) => enemy.isOffScreen);
 
@@ -137,8 +144,6 @@ class BirdTDGame extends Game with TapDetector {
     }
 
     if (!isHandled) {
-      spawnEnemies();
-
       for (Actor actor in actors) {
         if (actor.contains(details.globalPosition)) {
           actor.onTapDown();
