@@ -23,6 +23,8 @@ class Tile implements Actor {
     }
   }
 
+  Rect get rect => _rect;
+
   void render(Canvas canvas) {
     _sprite.renderRect(canvas, _rect);
   }

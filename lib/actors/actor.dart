@@ -1,6 +1,8 @@
 import 'dart:ui';
 
 abstract class Actor {
+  Rect get rect;
+
   void render(Canvas canvas) {}
 
   void update(double t) {}
@@ -11,5 +13,7 @@ abstract class Actor {
 
   void onTapCancel() {}
 
-  bool contains(Offset offset) {}
+  bool contains(Offset offset) {
+    return false;
+  }
 }

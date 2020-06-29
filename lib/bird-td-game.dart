@@ -80,7 +80,7 @@ class BirdTDGame extends Game with TapDetector {
         height = screenHeight / (tileMap.height);
         Rect rect = Rect.fromLTWH((x) * width, (y) * height, width, height);
         Tile tile = Tile(rect, tileMap.get(x, y), (Rect rect) {
-          actors.add(Tower(rect));
+          actors.add(Tower(this, rect));
         });
         tiles.add(tile);
         if (y == 0 && tileMap.get(x, y) == TileType.dirt) {

@@ -18,11 +18,15 @@ class Enemy implements Actor {
   Sprite deadSprite;
   double enemySpriteIndex = 0;
 
+  int hp = 100;
+
   Enemy(this.game, double x, double y) {
     enemyRect = Rect.fromLTWH(x, y, 30, 30);
 
     rnd = Random();
   }
+
+  Rect get rect => enemyRect;
 
   void death() {
     isWalking = false;
@@ -83,5 +87,15 @@ class Enemy implements Actor {
   @override
   bool contains(Offset offset) {
     return enemyRect.contains(offset);
+  }
+
+  /// Returns whether this enemy has 0 hp after the attack or not.
+  bool onAttacked(int damage) {
+    hp = max(0, hp - damage);
+    bool isDead = hp == 0;
+    if (isDead) {
+      game.enemies.remove(this);
+    }
+    return isDead;
   }
 }
