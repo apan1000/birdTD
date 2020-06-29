@@ -27,7 +27,7 @@ class Enemy implements Actor {
   void death() {
     isWalking = false;
 
-    game.spawnEnemies();
+//    game.spawnEnemies();
   }
 
   @override
@@ -57,9 +57,18 @@ class Enemy implements Actor {
   @override
   void update(double t) {
     if (isWalking) {
+
       speed = rnd.nextDouble();
       enemySpriteIndex = speed > 0.5 ? 1 : 0;
-      enemyRect = enemyRect.translate(0, game.tileSize * speed * t);
+
+      if (enemyRect.top < game.xStartPositions[rnd.nextInt(game.xStartPositions.length)]) {
+        enemyRect = enemyRect.translate(0, game.tileSize * speed * t);
+      } else if (enemyRect.top == game.yStartPositions[rnd.nextInt(game.yStartPositions.length)] &&
+          enemyRect.topLeft.dx > game.xStartPositions[rnd.nextInt(game.xStartPositions.length)]) {
+        enemyRect = enemyRect.translate(-(game.tileSize * speed * t), 0);
+      } else {
+        enemyRect = enemyRect.translate(0, game.tileSize * speed * t);
+      }
 
       if (enemyRect.top > game.screenSize.height) {
         isOffScreen = true;

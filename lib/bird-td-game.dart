@@ -22,7 +22,9 @@ import 'views/lost_view.dart';
 
 class BirdTDGame extends Game with TapDetector {
   Size screenSize;
-  double tileSize = 50;
+  double tileSize = 54;
+  int tileColumnSize = 6;
+  int tileRowSize = 9;
   Random random;
 
   View activeView = View.home;
@@ -35,13 +37,32 @@ class BirdTDGame extends Game with TapDetector {
   List<Actor> actors = [];
   List<Tile> tiles = [];
 
+  List<double> xStartPositions = [];
+  List<double> yStartPositions = [];
+
   double createEnemiesTimer = 0.0;
+
+  double width = 0;
+  double height = 0;
 
   BirdTDGame() {
     init();
   }
 
   void init() async {
+
+    tileMap = TileMap([
+      1, 1, 0, 1, 1, 1,
+      1, 1, 0, 1, 1, 1,
+      1, 1, 0, 0, 0, 0,
+      1, 1, 0, 1, 1, 1,
+      1, 1, 0, 1, 1, 1,
+      1, 1, 0, 0, 0, 0,
+      1, 1, 0, 1, 1, 1,
+      1, 1, 0, 1, 1, 1,
+      1, 1, 0, 1, 1, 1
+    ].map((e) => TileType.values[e]).toList(), tileColumnSize);
+
     random = Random();
     enemies = List<Enemy>();
     resize(await Flame.util.initialDimensions());
@@ -50,29 +71,28 @@ class BirdTDGame extends Game with TapDetector {
     startButton = StartButton(this);
     lostView = LostView(this);
 
-    TileMap tileMap = TileMap([
-      1, 1, 0, 1, 1, 1,
-      1, 1, 0, 1, 1, 1,
-      1, 1, 0, 1, 1, 1,
-      1, 1, 0, 1, 1, 1,
-      1, 1, 0, 0, 0, 0,
-      1, 1, 0, 1, 1, 1,
-      1, 1, 0, 1, 1, 1,
-      1, 1, 0, 1, 1, 1,
-      1, 1, 0, 1, 1, 1
-    ].map((e) => TileType.values[e]).toList(), 6);
+    double screenWidth = screenSize.width;
+    double screenHeight = screenSize.height;
 
-    var screenWidth = screenSize.width;
-    var screenHeight = screenSize.height;
-    for (int x = 1; x < tileMap.width-1; x++) {
-      for (int y = 1; y < tileMap.height-1; y++) {
-        var width = screenWidth / (tileMap.width-2);
-        var height = screenHeight / (tileMap.height-2);
-        Rect rect = Rect.fromLTWH((x-1) * width, (y-1) * height, width, height);
+    for (int x = 0; x < tileMap.width; x++) {
+      for (int y = 0; y < tileMap.height; y++) {
+        width = screenWidth / (tileMap.width);
+        height = screenHeight / (tileMap.height);
+        Rect rect = Rect.fromLTWH((x) * width, (y) * height, width, height);
         Tile tile = Tile(rect, tileMap.get(x, y), (Rect rect) {
           actors.add(Tower(rect));
         });
         tiles.add(tile);
+        if (y == 0 && tileMap.get(x, y) == TileType.dirt) {
+          if (!xStartPositions.contains(x * width + (width / 3))) {
+            xStartPositions.add(x * width + (width / 3));
+          }
+        }
+        if (x == tileMap.width-1 && tileMap.get(x, y) == TileType.dirt) {
+          if (!yStartPositions.contains(y * height + (height / 3))) {
+            yStartPositions.add(y * height + (height / 3));
+          }
+        }
       }
     }
   }
@@ -131,9 +151,23 @@ class BirdTDGame extends Game with TapDetector {
   }
 
   void spawnEnemies() {
-    double x = screenSize.width / (3);
-    double y = -50;
-    enemies.add(Spider(this, x, y));
+    if (random.nextDouble() > 0.5) {
+      enemies.add(
+          Spider(
+              this,
+              xStartPositions[random.nextInt(xStartPositions.length)],
+              0 - height
+          )
+      );
+    } else {
+      enemies.add(
+          Spider(
+              this,
+              screenSize.width + width,
+              yStartPositions[random.nextInt(yStartPositions.length)]
+          )
+      );
+    }
   }
 
   void onTapDown(TapDownDetails details) {
