@@ -28,12 +28,6 @@ class Enemy implements Actor {
 
   Rect get rect => enemyRect;
 
-  void death() {
-    isWalking = false;
-
-//    game.spawnEnemies();
-  }
-
   @override
   void onTapCancel() {
     // TODO: implement onTapCancel
@@ -94,7 +88,9 @@ class Enemy implements Actor {
     game.money += BirdTDGame.MONEY_EARNT_BY_HIT ;
     hp = max(0, hp - damage);
     bool isDead = hp == 0;
-    if (isDead) {
+    if (hp < 20 && hp > 0) {
+      isWalking = false;
+    }else if (isDead) {
       game.enemies.remove(this);
     }
     return isDead;
