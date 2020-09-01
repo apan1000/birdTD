@@ -91,6 +91,7 @@ class Enemy implements Actor {
 
   /// Returns whether this enemy has 0 hp after the attack or not.
   bool onAttacked(int damage) {
+    game.money += BirdTDGame.MONEY_EARNT_BY_HIT ;
     hp = max(0, hp - damage);
     bool isDead = hp == 0;
     if (isDead) {

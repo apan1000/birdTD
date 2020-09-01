@@ -11,6 +11,8 @@ import 'package:birdTD/views/home-view.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flame/gestures.dart';
+import 'package:flame/position.dart';
+import 'package:flame/text_config.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -21,6 +23,7 @@ import 'tile-map.dart';
 import 'views/lost_view.dart';
 
 class BirdTDGame extends Game with TapDetector {
+  //region variables
   Size screenSize;
   double tileSize = 54;
   int tileColumnSize = 6;
@@ -44,6 +47,20 @@ class BirdTDGame extends Game with TapDetector {
 
   double width = 0;
   double height = 0;
+
+  static const TextConfig textConfig = TextConfig(
+      fontSize: 25.0,
+      fontFamily: 'Awesome Font',
+      color: Colors.amber
+  );
+
+  //prices
+  double money = START_MONEY;
+  static double START_MONEY = 10;
+  static double TOWER_COSTS = 10;
+  static double MONEY_EARNT_BY_HIT = 0.5;
+
+// endregion
 
   BirdTDGame() {
     init();
@@ -81,7 +98,7 @@ class BirdTDGame extends Game with TapDetector {
         Rect rect = Rect.fromLTWH((x) * width, (y) * height, width, height);
         Tile tile = Tile(rect, tileMap.get(x, y), (Rect rect) {
           actors.add(Tower(this, rect));
-        });
+        }, this);
         tiles.add(tile);
         if (y == 0 && tileMap.get(x, y) == TileType.dirt) {
           xStartPosition = x * width + (width / 3);
@@ -109,6 +126,7 @@ class BirdTDGame extends Game with TapDetector {
           tiles.forEach((tile) => tile.render(canvas));
           actors.forEach((actor) => actor.render(canvas));
           enemies.forEach((enemy) => enemy.render(canvas));
+          textConfig.render(canvas, "$money💰", Position(10, 10));
           break;
         }
       case View.lost:
@@ -192,6 +210,7 @@ class BirdTDGame extends Game with TapDetector {
     if (activeView == View.home || activeView == View.lost) {
       if (startButton.rect.contains(details.globalPosition)) {
         startButton.onTapUp();
+        money = START_MONEY;
       }
       isHandled = true;
     }
@@ -209,7 +228,9 @@ class BirdTDGame extends Game with TapDetector {
     if (!isHandled) {
       for (Tile tile in tiles) {
         if (tile.contains(details.globalPosition)) {
-          tile.onTapUp();
+          if ( money >= TOWER_COSTS ) {
+            tile.onTapUp();
+          }
           isHandled = true;
           break;
         }
