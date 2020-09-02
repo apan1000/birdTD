@@ -18,6 +18,7 @@ void main() async {
     'bird4.png',
     'grass.png',
     'dirt.png',
+    'nut.png',
     'lose-splash.png',
     'title.png',
     'dialog-credits.png',

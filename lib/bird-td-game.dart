@@ -2,6 +2,7 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:birdTD/actors/actor.dart';
+import 'package:birdTD/actors/bullet.dart';
 import 'package:birdTD/actors/enemy.dart';
 import 'package:birdTD/actors/spider.dart';
 import 'package:birdTD/actors/tower.dart';
@@ -39,6 +40,7 @@ class BirdTDGame extends Game with TapDetector {
   List<Enemy> enemies;
   List<Actor> actors = [];
   List<Tile> tiles = [];
+  List<Bullet> bullets;
 
   double xStartPosition = 0;
   double yStartPosition = 0;
@@ -82,6 +84,7 @@ class BirdTDGame extends Game with TapDetector {
 
     random = Random();
     enemies = List<Enemy>();
+    bullets = List<Bullet>();
     resize(await Flame.util.initialDimensions());
 
     homeView = HomeView(this);
@@ -126,6 +129,7 @@ class BirdTDGame extends Game with TapDetector {
           tiles.forEach((tile) => tile.render(canvas));
           actors.forEach((actor) => actor.render(canvas));
           enemies.forEach((enemy) => enemy.render(canvas));
+          bullets.forEach((bullet) => bullet.render(canvas));
           textConfig.render(canvas, "$money💰", Position(10, 10));
           break;
         }
@@ -136,6 +140,7 @@ class BirdTDGame extends Game with TapDetector {
           }
           actors.clear();
           enemies.clear();
+          bullets.clear();
           lostView.render(canvas);
           startButton.render(canvas);
           break;
@@ -154,8 +159,8 @@ class BirdTDGame extends Game with TapDetector {
     enemies.forEach((enemy) => enemy.update(t));
     enemies.removeWhere((enemy) => enemy.isOffScreen);
 
+    bullets.forEach((bullet) => bullet.update(t));
     actors.forEach((actor) => actor.update(t));
-
     tiles.forEach((tile) => tile.update(t));
   }
 

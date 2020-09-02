@@ -17,6 +17,7 @@ class Enemy implements Actor {
   List<Sprite> enemySprite;
   Sprite deadSprite;
   double enemySpriteIndex = 0;
+  bool isDead = false;
 
   int hp = 100;
 
@@ -87,7 +88,7 @@ class Enemy implements Actor {
   bool onAttacked(int damage) {
     game.money += BirdTDGame.MONEY_EARNT_BY_HIT ;
     hp = max(0, hp - damage);
-    bool isDead = hp == 0;
+    isDead = hp == 0;
     if (hp < 20 && hp > 0) {
       isWalking = false;
     }else if (isDead) {

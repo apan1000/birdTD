@@ -2,6 +2,7 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:birdTD/actors/actor.dart';
+import 'package:birdTD/actors/bullet.dart';
 import 'package:birdTD/actors/enemy.dart';
 import 'package:birdTD/bird-td-game.dart';
 import 'package:flame/sprite.dart';
@@ -93,7 +94,6 @@ class Tower implements Actor {
       for (Enemy enemy in _game.enemies) {
         if (isInRange(enemy)) {
           _target = enemy;
-          print("HEJ: Target: $_target");
           break;
         }
       }
@@ -106,8 +106,12 @@ class Tower implements Actor {
     _attackTimer += t;
     if (_attackTimer > _attackSpeed) {
       bool targetIsDead = _target.onAttacked(_attackPower);
+
       if (targetIsDead) {
         _target = null;
+      } else {
+        Bullet bullet = Bullet(_game, this, _target);
+        _game.bullets.add(bullet);
       }
       _attackTimer = 0.0;
     }
